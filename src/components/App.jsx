@@ -1,4 +1,6 @@
 import React from "react";
+import './App.css';
+// import * as studioghiblilogo from '../images/studioghiblilogo.png';
 import 'isomorphic-fetch';
 import 'es6-promises';
 
@@ -8,10 +10,21 @@ class App extends React.Component {
 
         this.state =  {
             films: [],
-            loadFilms: false
+            people: [],
+            loadFilms: false,
+            loadPeople: false
         }
     }
 
+loadPeople() {
+    fetch('https://ghibliapi.herokuapp.com/people')
+        .then(res => res.json())
+        .then(people => this.setState({
+            people: people,
+            loadPeople: true
+        }))
+        .catch(err => console.log(err));
+}
 
 loadFilms() {
     fetch('https://ghibliapi.herokuapp.com/films')
@@ -27,7 +40,7 @@ loadFilms() {
             <div>
             {this.state.films.map(film =>  {
         return (
-            <div key = {film.id}>
+            <div className='card'key = {film.id}>
             <h1>{film.title}</h1>
             <p>{film.description}</p>
             </div>
@@ -37,11 +50,35 @@ loadFilms() {
       </div>
         )
 
-    } else {
-        return (
-        <button onClick = {() => this.loadFilms()}>Load Films</button>
-       ) 
     }
+    
+    else if (this.state.loadPeople) {
+        return (
+            <div>
+            {this.state.people.map(people =>  {
+        return (
+        <div className='card'key = {people.id}>
+            <h1>{people.name}</h1>
+           <p>{people.gender}</p> 
+           <p>{people.age}</p>
+            </div>
+        )
+    })}
+        </div>
+            )
+}
+
+    else {
+        return (
+       <div> <button onClick = {() => this.loadFilms()}>Load Films</button> 
+        <button onClick = {() => this.loadPeople()}>Load People</button>
+   </div>
+       ) 
+    } 
+    
+
+
+      
     }
 };
 
